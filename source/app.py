@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtGui import QFileDialog
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -83,7 +84,38 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Convert", None))
         self.label_5.setText(_translate("MainWindow", "Start:", None))
         self.label_6.setText(_translate("MainWindow", "End :", None))
+        
+        self.pushButton.clicked.connect(self.selectFile)
+        self.pushButton_2.clicked.connect(self.convertFile)
 
+    def selectFile(self):
+        self.file_name = str(QFileDialog.getOpenFileName())
+        self.label_2.setText(self.file_name)
+        b_name = os.path.basename(str(self.file_name))
+        self.lineEdit.setText(str(b_name))
+        
+    def convertFile(self):
+        print "convert"
+        o_name = str(self.lineEdit.text())
+#         print o_name
+        if o_name == "":
+            o_name = os.path.basename(self.file_name)
+        
+        start_time = self.lineEdit_2.text()
+        end_time = self.lineEdit_3.text()
+#         print start_time, end_time
+        duration = np.int(str(end_time)) - np.int(str(start_time))
+        o_path = os.path.join(os.path.dirname(self.file_name), o_name)
+
+        start_time_format = '00:'+start_time+':00'
+        command = 'ffmpeg' +' -ss ' + start_time_format + ' -i ' + self.file_name + ' -t ' + str(duration) + ' -acodec copy ' + o_path
+        print command
+        os.system(str(command))
+#         if o_name.split('.')[1] is None:
+#             print "None"
+
+import os
+import numpy as np
 
 if __name__ == "__main__":
     import sys
